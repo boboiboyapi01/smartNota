@@ -8,7 +8,7 @@ import 'package:excel/excel.dart';
 import 'package:path_provider/path_provider.dart';
 
 class OCRService {
-  final String baseUrl = "http://localhost:5000"; 
+  final String baseUrl = "http://localhost:5000";
 
   /// Ping backend
   Future<bool> pingBackend() async {
@@ -25,10 +25,7 @@ class OCRService {
   Future<Map<String, dynamic>?> extractTable(Uint8List imageBytes) async {
     try {
       // Buat multipart request
-      var request = http.MultipartRequest(
-        'POST',
-        Uri.parse("$baseUrl/extract-ocr"),
-      );
+      var request = http.MultipartRequest('POST', Uri.parse("$baseUrl/ocr"));
 
       // Tambahkan file sebagai multipart
       request.files.add(
@@ -62,10 +59,10 @@ class OCRService {
       final sheet = excel['Transaksi'];
 
       // Header informasi
-      sheet.appendRow([TextCellValue('Tanggal'), TextCellValue('Nama_Toko')]);
+      sheet.appendRow([TextCellValue('Tanggal'), TextCellValue('Nama Toko')]);
       sheet.appendRow([
         TextCellValue(data['tanggal'] ?? ''),
-        TextCellValue(data['nama_toko'] ?? ''),
+        TextCellValue(data['toko'] ?? ''),
       ]);
       sheet.appendRow([]);
       sheet.appendRow([
@@ -78,7 +75,10 @@ class OCRService {
       // Items
       if (data['items'] != null && data['items'] is List) {
         for (var item in data['items']) {
-          final subtotal = (item['jumlah'] ?? 0) * (item['harga'] ?? 0);
+          final jumlah = int.tryParse(item['jumlah']?.toString() ?? '0') ?? 0;
+          final harga = int.tryParse(item['harga']?.toString() ?? '0') ?? 0;
+          final subtotal = jumlah * harga;
+
           sheet.appendRow([
             TextCellValue(item['nama'] ?? ''),
             IntCellValue(item['jumlah'] ?? 0),
@@ -130,10 +130,10 @@ class OCRService {
       final sheet = excel['Transaksi'];
 
       // Header informasi
-      sheet.appendRow([TextCellValue('Tanggal'), TextCellValue('Nama_Toko')]);
+      sheet.appendRow([TextCellValue('Tanggal'), TextCellValue('Nama Toko')]);
       sheet.appendRow([
         TextCellValue(data['tanggal'] ?? ''),
-        TextCellValue(data['nama_toko'] ?? ''),
+        TextCellValue(data['toko'] ?? ''),
       ]);
       sheet.appendRow([]);
       sheet.appendRow([
@@ -146,7 +146,10 @@ class OCRService {
       // Items
       if (data['items'] != null && data['items'] is List) {
         for (var item in data['items']) {
-          final subtotal = (item['jumlah'] ?? 0) * (item['harga'] ?? 0);
+          final jumlah = int.tryParse(item['jumlah']?.toString() ?? '0') ?? 0;
+          final harga = int.tryParse(item['harga']?.toString() ?? '0') ?? 0;
+          final subtotal = jumlah * harga;
+
           sheet.appendRow([
             TextCellValue(item['nama'] ?? ''),
             IntCellValue(item['jumlah'] ?? 0),
